@@ -1,76 +1,56 @@
 package org.caronar.app.model;
 
-import android.net.Uri;
+import com.google.gson.annotations.SerializedName;
 
-public interface User extends BaseModel {
+public final class User implements BaseModel {
 
-    @Override long getId();
-    String getName();
-    String getPhone();
-    Uri getPhoto();
-    Editor edit();
+    @SerializedName("id")
+    private long mId = 0;
 
-    interface Editor {
-        Editor setName(String name);
-        Editor setPhone(String phone);
-        Editor setPhoto(Uri photo);
-        Editor setPhoto(String photo);
+    @SerializedName("name")
+    private String mName = DEFAULT_NAME;
 
-        User finalizeEdition();
+    @SerializedName("phone")
+    private String mPhone = DEFAULT_PHONE;
 
-        class Default implements Editor {
-            private final User mUser;
+    @SerializedName("photo")
+    private String mPhoto = DEFAULT_PHOTO;
 
-            public Default(User user) {
-                mUser = user;
-            }
-
-            @Override public Editor setName(String name) {
-                return this;
-            }
-
-            @Override public Editor setPhone(String phone) {
-                return this;
-            }
-
-            @Override public Editor setPhoto(Uri photo) {
-                return this;
-            }
-
-            @Override public Editor setPhoto(String photo) {
-                return this;
-            }
-
-            @Override public User finalizeEdition() {
-                return mUser;
-            }
-        }
+    @Override public long getId() {
+        return mId;
     }
 
-    User DEFAULT = new User() {
+    public void setId(long id) {
+        mId = id;
+    }
 
-        @Override public long getId() {
-            return 0;
-        }
+    public String getName() {
+        return mName;
+    }
 
-        @Override public String getName() {
-            return DEFAULT_NAME;
-        }
+    public void setName(String name) {
+        mName = name;
+    }
 
-        @Override public String getPhone() {
-            return DEFAULT_PHONE;
-        }
+    public String getPhone() {
+        return mPhone;
+    }
 
-        @Override public Uri getPhoto() {
-            return DEFAULT_PHOTO;
-        }
+    public void setPhone(String phone) {
+        mPhone = phone;
+    }
 
-        @Override public Editor edit() {
-            return new Editor.Default(this);
-        }
-    };
+    public String getPhoto() {
+        return mPhoto;
+    }
 
-    String DEFAULT_NAME = "user_without_name";
-    String DEFAULT_PHONE = "user_without_phone";
-    Uri DEFAULT_PHOTO = Uri.EMPTY;
+    public void setPhoto(String photo) {
+        mPhoto = photo;
+    }
+
+    public static final User DEFAULT = new User();
+
+    public static final String DEFAULT_NAME = "user_without_name";
+    public static final String DEFAULT_PHONE = "user_without_phone";
+    public static final String DEFAULT_PHOTO = "default_photo";
 }

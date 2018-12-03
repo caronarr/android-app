@@ -1,69 +1,56 @@
 package org.caronar.app.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.caronar.app.location.GeoCoordinate;
 
-public interface Location extends GeoCoordinate, BaseModel {
+public final class Location implements GeoCoordinate, BaseModel {
 
-    @Override long getId();
-    String getName();
-    @Override double getLatitude();
-    @Override double getLongitude();
-    Editor edit();
+    @SerializedName("id")
+    private long mId = 0;
 
-    interface Editor {
-        Editor setName(String name);
-        Editor setLatitude(double latitude);
-        Editor setLongitude(double longitude);
-        Location finalizeEdition();
+    @SerializedName("name")
+    private String mName = DEFAULT_NAME;
 
-        class Default implements Editor {
-            private final Location mLocation;
+    @SerializedName("latitude")
+    private double mLatitude = GeoCoordinate.DEFAULT_LATITUDE;
 
-            public Default(Location location) {
-                mLocation = location;
-            }
+    @SerializedName("longitude")
+    private double mLongitude = GeoCoordinate.DEFAULT_LONGITUDE;
 
-            @Override public Editor setName(String name) {
-                return this;
-            }
-
-            @Override public Editor setLatitude(double latitude) {
-                return this;
-            }
-
-            @Override public Editor setLongitude(double longitude) {
-                return this;
-            }
-
-            @Override public Location finalizeEdition() {
-                return mLocation;
-            }
-        }
+    @Override public long getId() {
+        return mId;
     }
 
-    Location DEFAULT = new Location() {
+    public void setId(long id) {
+        mId = id;
+    }
 
-        @Override public long getId() {
-            return 0;
-        }
+    public String getName() {
+        return mName;
+    }
 
-        @Override public double getLatitude() {
-            return Location.DEFAULT_LATITUDE;
-        }
+    public void setName(String name) {
+        mName = name;
+    }
 
-        @Override public double getLongitude() {
-            return Location.DEFAULT_LONGITUDE;
-        }
+    @Override public double getLatitude() {
+        return mLatitude;
+    }
 
-        @Override public String getName() {
-            return DEFAULT_NAME;
-        }
+    public void setLatitude(double latitude) {
+        mLatitude = latitude;
+    }
 
-        @Override public Editor edit() {
-            return new Editor.Default(this);
-        }
+    @Override public double getLongitude() {
+        return mLongitude;
+    }
 
-    };
+    public void setLongitude(double longitude) {
+        mLongitude = longitude;
+    }
 
-    String DEFAULT_NAME = "location_without_name";
+    public static final Location DEFAULT = new Location();
+
+    public static final String DEFAULT_NAME = "location_without_name";
 }

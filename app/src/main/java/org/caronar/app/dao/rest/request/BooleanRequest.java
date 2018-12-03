@@ -7,10 +7,12 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonRequest;
 
+import org.caronar.app.dao.rest.future.VolleyCompletableFuture;
+
 public class BooleanRequest extends JsonRequest<Boolean> {
 
-    public BooleanRequest(int method, String url, @Nullable String requestBody, Response.Listener<Boolean> listener, @Nullable Response.ErrorListener errorListener) {
-        super(method, url, requestBody, listener, errorListener);
+    public BooleanRequest(int method, String url, @Nullable String requestBody, VolleyCompletableFuture<Boolean> futureResponse) {
+        super(method, url, requestBody, futureResponse, futureResponse);
     }
 
     @Override protected Response<Boolean> parseNetworkResponse(NetworkResponse response) {

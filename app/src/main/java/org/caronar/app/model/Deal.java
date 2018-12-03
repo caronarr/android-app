@@ -1,64 +1,63 @@
 package org.caronar.app.model;
 
-public interface Deal extends BaseModel{
-    @Override long getId();
-    DriverOffer getDriverOffer();
-    RiderOffer getRiderOffer();
-    double getAgreedTip();
+import com.google.gson.annotations.SerializedName;
 
-    Editor edit();
+public final class Deal implements BaseModel{
 
-    interface Editor {
-        Editor setAgreedTip(double tip);
-        Editor setDriverOffer(DriverOffer driverOffer);
-        Editor setRiderOffer(RiderOffer riderOffer);
-        Deal finalizeEdition();
+    @SerializedName("id")
+    private long mId;
 
-        class Default implements Editor {
+    @SerializedName("driverOffer")
+    private DriverOffer mDriverOffer;
 
-            private final Deal mDeal;
+    @SerializedName("riderOffer")
+    private RiderOffer mRiderOffer;
 
-            public Default(Deal deal) {
-                mDeal = deal;
-            }
+    @SerializedName("agreedTip")
+    private double mAgreedTip;
 
-            @Override public Editor setAgreedTip(double tip) {
-                return this;
-            }
-
-            @Override public Editor setDriverOffer(DriverOffer driverOffer) {
-                return this;
-            }
-
-            @Override public Editor setRiderOffer(RiderOffer riderOffer) {
-                return this;
-            }
-
-            @Override public Deal finalizeEdition() {
-                return mDeal;
-            }
-        }
+    public Deal() {
+        this(0, new DriverOffer(), new RiderOffer(), 0);
     }
 
-    Deal DEFAULT = new Deal() {
-        @Override public long getId() {
-            return 0;
-        }
+    private Deal(long id, DriverOffer driverOffer, RiderOffer riderOffer, double agreedTip) {
+        mId = id;
+        mDriverOffer = driverOffer;
+        mRiderOffer = riderOffer;
+        mAgreedTip = agreedTip;
+    }
 
-        @Override public double getAgreedTip() {
-            return 0;
-        }
+    @Override public long getId() {
+        return mId;
+    }
 
-        @Override public DriverOffer getDriverOffer() {
-            return DriverOffer.DEFAULT;
-        }
+    public void setId(long id) {
+        mId = id;
+    }
 
-        @Override public RiderOffer getRiderOffer() {
-            return RiderOffer.DEFAULT;
-        }
+    public DriverOffer getDriverOffer() {
+        return mDriverOffer;
+    }
 
-        @Override public Editor edit() {
-            return new Editor.Default(this);
-        }
-    };
+    public void setDriverOffer(DriverOffer driverOffer) {
+        mDriverOffer = driverOffer;
+    }
+
+    public RiderOffer getRiderOffer() {
+        return mRiderOffer;
+    }
+
+    public void setRiderOffer(RiderOffer riderOffer) {
+        mRiderOffer = riderOffer;
+    }
+
+    public double getAgreedTip() {
+        return mAgreedTip;
+    }
+
+    public void setAgreedTip(double agreedTip) {
+        mAgreedTip = agreedTip;
+    }
+
+    public static final Deal DEFAULT = new Deal(0, DriverOffer.DEFAULT, RiderOffer.DEFAULT, 0);
 }

@@ -1,88 +1,100 @@
 package org.caronar.app.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.caronar.app.ride.Schedule;
 
 import java.util.Date;
 
-public interface DriverOffer extends BaseModel, Schedule {
-    @Override long getId();
-    @Override Location getOrigin();
-    @Override Location getDestination();
-    @Override Date getScheduledTime();
-    double getRequestedTip();
-    User getDriver();
+public final class DriverOffer implements BaseModel, Schedule {
 
-    Editor edit();
+    @SerializedName("id")
+    private long mId;
 
-    interface Editor {
-        Editor setOrigin(Location origin);
-        Editor setDestination(Location destination);
-        Editor setScheduledTime(Date scheduledTime);
-        Editor setRequestedTip(double requestedTip);
-        Editor setDriver(User driver);
-        DriverOffer finalizeEdition();
+    @SerializedName("origin")
+    private Location mOrigin;
 
-        class Default implements Editor {
+    @SerializedName("destination")
+    private Location mDestination;
 
-            private final DriverOffer mDriverOffer;
+    @SerializedName("scheduledTime")
+    private Date mScheduledTime;
 
-            Default(DriverOffer driverOffer) {
-                mDriverOffer = driverOffer;
-            }
+    @SerializedName("requestedTip")
+    private double mRequestedTip;
 
-            @Override public Editor setOrigin(Location origin) {
-                return this;
-            }
+    @SerializedName("driver")
+    private User mDriver;
 
-            @Override public Editor setDestination(Location destination) {
-                return this;
-            }
-
-            @Override public Editor setScheduledTime(Date scheduledTime) {
-                return this;
-            }
-
-            @Override public Editor setRequestedTip(double requestedTip) {
-                return this;
-            }
-
-            @Override public Editor setDriver(User driver) {
-                return this;
-            }
-
-            @Override public DriverOffer finalizeEdition() {
-                return mDriverOffer;
-            }
-        }
+    public DriverOffer() {
+        this(0, new Location(), new Location(), Schedule.DEFAULT_SCHEDULED_TIME,
+                0, new User());
     }
 
-    DriverOffer DEFAULT = new DriverOffer() {
-        @Override public long getId() {
-            return 0;
-        }
+    private DriverOffer(long id, Location origin, Location destination, Date scheduledTime,
+                       double requestedTip, User driver) {
+        mId = id;
+        mOrigin = origin;
+        mDestination = destination;
+        mScheduledTime = scheduledTime;
+        mRequestedTip = requestedTip;
+        mDriver = driver;
+    }
 
-        @Override public Location getOrigin() {
-            return Location.DEFAULT;
-        }
+    @Override public long getId() {
+        return mId;
+    }
 
-        @Override public Location getDestination() {
-            return Location.DEFAULT;
-        }
+    public void setId(long id) {
+        mId = id;
+    }
 
-        @Override public Date getScheduledTime() {
-            return Schedule.DEFAULT_SCHEDULED_TIME;
-        }
+    @Override public Location getOrigin() {
+        return mOrigin;
+    }
 
-        @Override public double getRequestedTip() {
-            return 0;
-        }
+    public void setOrigin(Location origin) {
+        mOrigin = origin;
+    }
 
-        @Override public User getDriver() {
-            return User.DEFAULT;
-        }
+    @Override public Location getDestination() {
+        return mDestination;
+    }
 
-        @Override public Editor edit() {
-            return new Editor.Default(this);
-        }
-    };
+    public void setDestination(Location destination) {
+        mDestination = destination;
+    }
+
+    @Override public Date getScheduledTime() {
+        return mScheduledTime;
+    }
+
+    public void setScheduledTime(Date scheduledTime) {
+        mScheduledTime = scheduledTime;
+    }
+
+    public double getRequestedTip() {
+        return mRequestedTip;
+    }
+
+    public void setRequestedTip(double requestedTip) {
+        mRequestedTip = requestedTip;
+    }
+
+    public User getDriver() {
+        return mDriver;
+    }
+
+    public void setDriver(User driver) {
+        mDriver = driver;
+    }
+
+    public static final DriverOffer DEFAULT = new DriverOffer(
+            0,
+            Location.DEFAULT,
+            Location.DEFAULT,
+            Schedule.DEFAULT_SCHEDULED_TIME,
+            0,
+            User.DEFAULT
+    );
 }

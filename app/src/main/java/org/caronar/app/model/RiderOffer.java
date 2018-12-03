@@ -1,90 +1,99 @@
 package org.caronar.app.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.caronar.app.ride.Schedule;
 
 import java.util.Date;
 
-public interface RiderOffer extends BaseModel, Schedule {
-    @Override long getId();
-    @Override Location getOrigin();
-    @Override Location getDestination();
-    @Override Date getScheduledTime();
-    double getOfferedTip();
-    User getRider();
+public final class RiderOffer implements BaseModel, Schedule {
 
-    Editor edit();
+    @SerializedName("id")
+    private long mId;
 
-    interface Editor {
-        Editor setOrigin(Location origin);
-        Editor setDestination(Location destination);
-        Editor setScheduledTime(Date scheduledTime);
-        Editor setOfferedTip(double offeredTip);
-        Editor setRider(User rider);
-        RiderOffer finalizeEdition();
+    @SerializedName("origin")
+    private Location mOrigin;
 
-        class Default implements Editor {
+    @SerializedName("destination")
+    private Location mDestination;
 
-            private final RiderOffer mRiderOffer;
+    @SerializedName("scheduledTime")
+    private Date mScheduledTime;
 
-            public Default(RiderOffer riderOffer) {
-                mRiderOffer = riderOffer;
-            }
+    @SerializedName("offeredTip")
+    private double mOfferedTip;
 
-            @Override public Editor setOrigin(Location origin) {
-                return this;
-            }
+    @SerializedName("rider")
+    private User mRider;
 
-            @Override public Editor setDestination(Location destination) {
-                return this;
-            }
-
-            @Override public Editor setScheduledTime(Date scheduledTime) {
-                return this;
-            }
-
-            @Override public Editor setOfferedTip(double offeredTip) {
-                return this;
-            }
-
-            @Override public Editor setRider(User rider) {
-                return this;
-            }
-
-            @Override public RiderOffer finalizeEdition() {
-                return mRiderOffer;
-            }
-        }
+    public RiderOffer() {
+        this(0, new Location(), new Location(), Schedule.DEFAULT_SCHEDULED_TIME,
+                0, new User());
     }
 
+    private RiderOffer(long id, Location origin, Location destination, Date scheduledTime,
+                       double offeredTip, User rider) {
+        mId = id;
+        mOrigin = origin;
+        mDestination = destination;
+        mScheduledTime = scheduledTime;
+        mOfferedTip = offeredTip;
+        mRider = rider;
+    }
 
-    RiderOffer DEFAULT = new RiderOffer() {
+    @Override public long getId() {
+        return mId;
+    }
 
-        @Override public long getId() {
-            return 0;
-        }
+    public void setId(long id) {
+        mId = id;
+    }
 
-        @Override public Editor edit() {
-            return new Editor.Default(this);
-        }
+    @Override public Location getOrigin() {
+        return mOrigin;
+    }
 
-        @Override public Location getOrigin() {
-            return Location.DEFAULT;
-        }
+    public void setOrigin(Location origin) {
+        mOrigin = origin;
+    }
 
-        @Override public Location getDestination() {
-            return Location.DEFAULT;
-        }
+    @Override public Location getDestination() {
+        return mDestination;
+    }
 
-        @Override public Date getScheduledTime() {
-            return Schedule.DEFAULT_SCHEDULED_TIME;
-        }
+    public void setDestination(Location destination) {
+        mDestination = destination;
+    }
 
-        @Override public double getOfferedTip() {
-            return 0;
-        }
+    @Override public Date getScheduledTime() {
+        return mScheduledTime;
+    }
 
-        @Override public User getRider() {
-            return User.DEFAULT;
-        }
-    };
+    public void setScheduledTime(Date scheduledTime) {
+        mScheduledTime = scheduledTime;
+    }
+
+    public double getOfferedTip() {
+        return mOfferedTip;
+    }
+
+    public void setOfferedTip(double offeredTip) {
+        mOfferedTip = offeredTip;
+    }
+
+    public User getRider() {
+        return mRider;
+    }
+
+    public void setRider(User rider) {
+        mRider = rider;
+    }
+
+    public static final RiderOffer DEFAULT = new RiderOffer(
+            0,
+            Location.DEFAULT,
+            Location.DEFAULT,
+            Schedule.DEFAULT_SCHEDULED_TIME,
+            0,
+            User.DEFAULT);
 }

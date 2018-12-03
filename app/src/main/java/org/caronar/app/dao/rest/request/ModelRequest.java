@@ -10,6 +10,7 @@ import com.android.volley.toolbox.JsonRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 
+import org.caronar.app.dao.rest.future.VolleyCompletableFuture;
 import org.caronar.app.model.BaseModel;
 
 import java.io.UnsupportedEncodingException;
@@ -20,12 +21,11 @@ public class ModelRequest<GsonModel extends BaseModel> extends JsonRequest<GsonM
     private final Class<? extends GsonModel> mClass;
 
     public ModelRequest(Gson gson,
-                 Class<? extends GsonModel> clazz,
-                 int method, String url,
-                 @Nullable String body,
-                 Response.Listener<GsonModel> listener,
-                 @Nullable Response.ErrorListener errorListener) {
-        super(method, url, body, listener, errorListener);
+                        Class<? extends GsonModel> clazz,
+                        int method, String url,
+                        @Nullable String body,
+                        VolleyCompletableFuture<GsonModel> futureResponse) {
+        super(method, url, body, futureResponse, futureResponse);
         mGson = gson;
         mClass = clazz;
     }

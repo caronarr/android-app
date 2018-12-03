@@ -8,33 +8,25 @@ import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 
 import org.caronar.app.dao.BaseManager;
-import org.caronar.app.dao.rest.future.CompletableFutureModel;
+import org.caronar.app.dao.rest.future.VolleyCompletableFuture;
 import org.caronar.app.dao.rest.request.ModelRequest;
 import org.caronar.app.model.BaseModel;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.CompletableFuture;
 
 class RestCollection<Model extends BaseModel> implements BaseManager<Model> {
     final RequestQueue mRequestQueue;
     final Gson mGson;
     final Uri mUri;
-    private final Class<? extends Model> mModelClass;
+    final Class<Model> mModelClass;
     final Model mDefaultModel;
 
-    public RestCollection(RequestQueue requestQueue, Gson gson, Uri collectionUri, Class<? extends Model> modelClass) {
+    public RestCollection(RequestQueue requestQueue, Gson gson, Uri collectionUri, Class<Model> modelClass, Model defaultModel) {
         mRequestQueue = requestQueue;
         mGson = gson;
         mUri = collectionUri;
         mModelClass = modelClass;
-
-        try {
-            Field DEFAULT = mModelClass.getField("DEFAULT");
-            mDefaultModel = (Model) DEFAULT.get(null);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            mDefaultModel = null;
-        }
+        mDefaultModel = defaultModel;
     }
 
     @Override public Model create() {
@@ -45,22 +37,21 @@ class RestCollection<Model extends BaseModel> implements BaseManager<Model> {
         }
     }
 
-    @Override public CompletableFuture<Pair<Model, Boolean>> getById(long id) {
-        CompletableFutureModel<Model> response = new CompletableFutureModel<>(mDefaultModel);
+    @Override public VolleyCompletableFuture<Model> getById(long id) {
+        VolleyCompletableFuture<Model> response = new VolleyCompletableFuture<>(mDefaultModel);
         mRequestQueue.add(new ModelRequest<Model>(
                 mGson,
                 mModelClass,
                 Request.Method.GET,
                 Uri.withAppendedPath(mUri, Long.toString(id)).toString(),
                 /*body*/ null,
-                response,
                 response
         ));
         return response;
     }
 
-    @Override public CompletableFuture<Pair<Model, Boolean>> save(Model model) {
-        CompletableFutureModel<Model> response = new CompletableFutureModel<>(mDefaultModel);
+    @Override public VolleyCompletableFuture<Model> save(Model model) {
+        VolleyCompletableFuture<Model> response = new VolleyCompletableFuture<>(mDefaultModel);
         int method = model.getId() == 0 ? Request.Method.POST : Request.Method.PUT;
         Uri.Builder requestBuilder = mUri.buildUpon();
         if (model.getId() > 0)
@@ -72,16 +63,15 @@ class RestCollection<Model extends BaseModel> implements BaseManager<Model> {
                 method,
                 uri,
                 mGson.toJson(model),
-                response,
                 response
         ));
         return response;
     }
 
-    @Override public CompletableFuture<Pair<Model, Boolean>> delete(Model model) {
-        CompletableFutureModel<Model> response = new CompletableFutureModel<>(mDefaultModel);
+    @Override public VolleyCompletableFuture<Model> delete(Model model) {
+        VolleyCompletableFuture<Model> response = new VolleyCompletableFuture<>(mDefaultModel);
         if (model.getId() == 0) {
-            response.complete(new Pair<>(mDefaultModel, false));
+            response.complete(new Pair<>(mDefaultModel, new Exception("model not found")));
             return response;
         }
         mRequestQueue.add(new ModelRequest<Model>(
@@ -90,7 +80,6 @@ class RestCollection<Model extends BaseModel> implements BaseManager<Model> {
                 Request.Method.DELETE,
                 Uri.withAppendedPath(mUri, Long.toString(model.getId())).toString(),
                 mGson.toJson(model),
-                response,
                 response
         ));
         return response;
