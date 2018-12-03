@@ -8,13 +8,12 @@ import org.caronar.app.model.DriverOffer;
 import org.caronar.app.model.RiderOffer;
 import org.caronar.app.model.User;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class DriverOfferManager implements BaseManager<DriverOffer> {
     public abstract CompletableFuture<Pair<List<DriverOffer>, ? extends Throwable>> listBestOffers
-            (RiderOffer riderOffer, double acceptableDistance, Duration acceptableDelay);
+            (RiderOffer riderOffer, double acceptableDistance, long acceptableDelay_sec);
     public abstract CompletableFuture<Pair<Boolean, ? extends Throwable>> broadcastOffer(DriverOffer offer);
     public abstract CompletableFuture<Pair<List<DriverOffer>, ? extends Throwable>> listOffersByDriver(User driver);
 

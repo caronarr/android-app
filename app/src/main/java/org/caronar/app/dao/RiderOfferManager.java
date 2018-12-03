@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class RiderOfferManager implements BaseManager<RiderOffer> {
     public abstract CompletableFuture<Pair<List<RiderOffer>, ? extends Throwable>> listBestOffers
-            (DriverOffer driverOffer, double acceptableDistance, Duration acceptableDelay);
+            (DriverOffer driverOffer, double acceptableDistance, long acceptableDelay_sec);
     public abstract CompletableFuture<Pair<Boolean, ? extends Throwable>> broadcastOffer(RiderOffer offer);
     public abstract CompletableFuture<Pair<List<RiderOffer>, ? extends Throwable>> listOffersByRider(User rider);
 
