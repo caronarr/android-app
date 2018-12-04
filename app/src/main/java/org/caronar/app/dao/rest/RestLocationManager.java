@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.util.ArrayMap;
 import android.util.Pair;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 
@@ -12,12 +11,9 @@ import org.caronar.app.BuildConfig;
 import org.caronar.app.dao.LocationManager;
 import org.caronar.app.dao.rest.future.VolleyCompletableFuture;
 import org.caronar.app.dao.rest.future.VolleyCompletableFutureList;
-import org.caronar.app.dao.rest.request.ModelRequest;
 import org.caronar.app.location.GeoCoordinate;
 import org.caronar.app.model.Location;
-import org.caronar.app.model.User;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 

@@ -13,7 +13,6 @@ import org.caronar.app.BuildConfig;
 import org.caronar.app.dao.UserManager;
 import org.caronar.app.dao.rest.future.VolleyCompletableFuture;
 import org.caronar.app.dao.rest.request.BooleanRequest;
-import org.caronar.app.dao.rest.request.ModelRequest;
 import org.caronar.app.model.User;
 
 import java.util.Map;
