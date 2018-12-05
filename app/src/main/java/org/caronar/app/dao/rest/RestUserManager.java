@@ -1,5 +1,6 @@
 package org.caronar.app.dao.rest;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.ArrayMap;
 import android.util.Pair;
@@ -9,7 +10,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
-import org.caronar.app.BuildConfig;
+import org.caronar.app.Caronar;
 import org.caronar.app.dao.UserManager;
 import org.caronar.app.dao.rest.future.VolleyCompletableFuture;
 import org.caronar.app.dao.rest.request.BooleanRequest;
@@ -22,18 +23,20 @@ public class RestUserManager extends UserManager {
 
     private final RestCollection<User> mCollection;
     private final RequestQueue mRequestQueue;
-    private final Uri mUri;
+    private final String mCollectionName = "users";
+    private Uri mUri;
+    private final Context mContext;
 
-    public RestUserManager(RequestQueue requestQueue, Gson gson) {
+    public RestUserManager(Context context, RequestQueue requestQueue, Gson gson) {
+        mContext = context;
         mRequestQueue = requestQueue;
-        mUri = Uri.parse(BuildConfig.DATA_URL).buildUpon().appendPath("user").build();
         mCollection = new RestCollection<>
-                (requestQueue, gson, mUri, User.class, User.DEFAULT);
+                (context, requestQueue, gson, mCollectionName, User.class, User.DEFAULT);
     }
 
     @Override public VolleyCompletableFuture<Boolean> sendPhoneVerificationChallenge(User user) {
         String phoneVerificationChallengeUrl =
-                mUri.buildUpon()
+                getUri().buildUpon()
                     .appendPath(Long.toString(user.getId()))
                     .appendPath("verify-phone-challenge")
                     .appendPath(user.getPhone())
@@ -49,7 +52,7 @@ public class RestUserManager extends UserManager {
 
     @Override public VolleyCompletableFuture<String> solvePhoneVerificationChallenge(User user, String code) {
         String phoneVerificationSolveUrl =
-                mUri.buildUpon()
+                getUri().buildUpon()
                         .appendPath(Long.toString(user.getId()))
                         .appendPath("verify-phone-solve")
                         .appendPath(user.getPhone())
@@ -68,7 +71,7 @@ public class RestUserManager extends UserManager {
         return response;
     }
 
-    @Override public VolleyCompletableFuture<User> findByPhone(String phone) {
+    @Override public CompletableFuture<Pair<User, ? extends Throwable>> findByPhone(String phone) {
         Map<String, String> filter = new ArrayMap<>();
         filter.put("phone", phone);
         return mCollection.filterOne(filter);
@@ -88,5 +91,12 @@ public class RestUserManager extends UserManager {
 
     @Override public CompletableFuture<Pair<User, ? extends Throwable>> delete(User model) {
         return mCollection.delete(model);
+    }
+
+    private Uri getUri() {
+        if (mUri == null)
+            mUri = ((Caronar) mContext.getApplicationContext()).getBaseRestUri()
+                    .buildUpon().appendEncodedPath(mCollectionName).build();
+        return mUri;
     }
 }

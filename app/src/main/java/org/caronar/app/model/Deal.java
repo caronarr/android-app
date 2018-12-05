@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public final class Deal implements BaseModel{
 
     @SerializedName("id")
-    private long mId;
+    private Long mId;
 
     @SerializedName("driverOffer")
     private DriverOffer mDriverOffer;
@@ -28,7 +28,7 @@ public final class Deal implements BaseModel{
     }
 
     @Override public long getId() {
-        return mId;
+        return mId != null ? mId : 0;
     }
 
     public void setId(long id) {

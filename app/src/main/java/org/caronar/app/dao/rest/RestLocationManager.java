@@ -1,15 +1,13 @@
 package org.caronar.app.dao.rest;
 
-import android.net.Uri;
+import android.content.Context;
 import android.util.ArrayMap;
 import android.util.Pair;
 
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 
-import org.caronar.app.BuildConfig;
 import org.caronar.app.dao.LocationManager;
-import org.caronar.app.dao.rest.future.VolleyCompletableFuture;
 import org.caronar.app.dao.rest.future.VolleyCompletableFutureList;
 import org.caronar.app.location.GeoCoordinate;
 import org.caronar.app.model.Location;
@@ -21,10 +19,9 @@ public class RestLocationManager extends LocationManager {
 
     private final RestCollection<Location> mCollection;
 
-    public RestLocationManager(RequestQueue requestQueue, Gson gson) {
-        Uri mManagedUri = Uri.parse(BuildConfig.DATA_URL).buildUpon().appendPath("location").build();
+    public RestLocationManager(Context context, RequestQueue requestQueue, Gson gson) {
         mCollection = new RestCollection<>
-                (requestQueue, gson, mManagedUri, Location.class, Location.DEFAULT);
+                (context, requestQueue, gson, "locations", Location.class, Location.DEFAULT);
     }
 
     @Override public VolleyCompletableFutureList<Location> searchNearby(GeoCoordinate coordinate,
@@ -36,7 +33,7 @@ public class RestLocationManager extends LocationManager {
         return mCollection.filter(filter);
     }
 
-    @Override public VolleyCompletableFuture<Location> findByName(String name) {
+    @Override public CompletableFuture<Pair<Location, ? extends Throwable>> findByName(String name) {
         Map<String, String> filter = new ArrayMap<>();
         filter.put("name", name);
         return mCollection.filterOne(filter);

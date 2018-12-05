@@ -9,7 +9,7 @@ import java.util.Date;
 public final class RiderOffer implements BaseModel, Schedule {
 
     @SerializedName("id")
-    private long mId;
+    private Long mId;
 
     @SerializedName("origin")
     private Location mOrigin;
@@ -42,7 +42,7 @@ public final class RiderOffer implements BaseModel, Schedule {
     }
 
     @Override public long getId() {
-        return mId;
+        return mId != null ? mId : 0;
     }
 
     public void setId(long id) {

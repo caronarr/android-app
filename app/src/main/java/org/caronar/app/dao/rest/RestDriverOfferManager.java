@@ -1,5 +1,6 @@
 package org.caronar.app.dao.rest;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.ArrayMap;
 import android.util.Pair;
@@ -8,7 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 
-import org.caronar.app.BuildConfig;
+import org.caronar.app.Caronar;
 import org.caronar.app.dao.DriverOfferManager;
 import org.caronar.app.dao.rest.future.VolleyCompletableFuture;
 import org.caronar.app.dao.rest.request.BooleanRequest;
@@ -25,13 +26,15 @@ public class RestDriverOfferManager extends DriverOfferManager {
 
     private final RestCollection<DriverOffer> mCollection;
     private final RequestQueue mRequestQueue;
-    private final Uri mUri;
+    private final String mCollectionName = "driver_offers";
+    private Uri mUri;
+    private final Context mContext;
 
-    public RestDriverOfferManager(RequestQueue requestQueue, Gson gson) {
+    public RestDriverOfferManager(Context context, RequestQueue requestQueue, Gson gson) {
+        mContext = context.getApplicationContext();
         mRequestQueue = requestQueue;
-        mUri = Uri.parse(BuildConfig.DATA_URL).buildUpon().appendPath("driver-offers").build();
         mCollection = new RestCollection<>
-                (requestQueue, gson, mUri, DriverOffer.class, DriverOffer.DEFAULT);
+                (context, requestQueue, gson, mCollectionName, DriverOffer.class, DriverOffer.DEFAULT);
     }
 
     @Override
@@ -52,7 +55,7 @@ public class RestDriverOfferManager extends DriverOfferManager {
     @Override
     public CompletableFuture<Pair<Boolean, ? extends Throwable>> broadcastOffer(DriverOffer offer) {
         String phoneVerificationChallengeUrl =
-                mUri.buildUpon()
+                getUri().buildUpon()
                         .appendPath(Long.toString(offer.getId()))
                         .appendPath("broadcast")
                         .build().toString();
@@ -90,5 +93,12 @@ public class RestDriverOfferManager extends DriverOfferManager {
     @Override
     public CompletableFuture<Pair<DriverOffer, ? extends Throwable>> delete(DriverOffer model) {
         return mCollection.delete(model);
+    }
+
+    private Uri getUri() {
+        if (mUri == null)
+            mUri = ((Caronar) mContext.getApplicationContext()).getBaseRestUri()
+                    .buildUpon().appendEncodedPath(mCollectionName).build();
+        return mUri;
     }
 }

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public final class User implements BaseModel {
 
     @SerializedName("id")
-    private long mId = 0;
+    private Long mId;
 
     @SerializedName("name")
     private String mName = DEFAULT_NAME;
@@ -17,7 +17,7 @@ public final class User implements BaseModel {
     private String mPhoto = DEFAULT_PHOTO;
 
     @Override public long getId() {
-        return mId;
+        return mId != null ? mId : 0;
     }
 
     public void setId(long id) {

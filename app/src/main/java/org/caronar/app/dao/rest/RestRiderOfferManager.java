@@ -1,5 +1,6 @@
 package org.caronar.app.dao.rest;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.ArrayMap;
 import android.util.Pair;
@@ -8,7 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 
-import org.caronar.app.BuildConfig;
+import org.caronar.app.Caronar;
 import org.caronar.app.dao.RiderOfferManager;
 import org.caronar.app.dao.rest.future.VolleyCompletableFuture;
 import org.caronar.app.dao.rest.request.BooleanRequest;
@@ -23,13 +24,15 @@ import java.util.concurrent.CompletableFuture;
 public class RestRiderOfferManager extends RiderOfferManager {
     private final RestCollection<RiderOffer> mCollection;
     private final RequestQueue mRequestQueue;
-    private final Uri mUri;
+    private final String mCollectionName = "rider_offers";
+    private Uri mUri;
+    private final Context mContext;
 
-    public RestRiderOfferManager(RequestQueue requestQueue, Gson gson) {
+    public RestRiderOfferManager(Context context, RequestQueue requestQueue, Gson gson) {
+        mContext = context;
         mRequestQueue = requestQueue;
-        mUri = Uri.parse(BuildConfig.DATA_URL).buildUpon().appendPath("rider-offers").build();
         mCollection = new RestCollection<>
-                (requestQueue, gson, mUri, RiderOffer.class, RiderOffer.DEFAULT);
+                (context, requestQueue, gson, mCollectionName, RiderOffer.class, RiderOffer.DEFAULT);
     }
 
     @Override
@@ -50,7 +53,7 @@ public class RestRiderOfferManager extends RiderOfferManager {
     @Override
     public CompletableFuture<Pair<Boolean, ? extends Throwable>> broadcastOffer(RiderOffer offer) {
         String phoneVerificationChallengeUrl =
-                mUri.buildUpon()
+                getUri().buildUpon()
                         .appendPath(Long.toString(offer.getId()))
                         .appendPath("broadcast")
                         .build().toString();
@@ -88,5 +91,12 @@ public class RestRiderOfferManager extends RiderOfferManager {
     @Override
     public CompletableFuture<Pair<RiderOffer, ? extends Throwable>> delete(RiderOffer model) {
         return mCollection.delete(model);
+    }
+
+    private Uri getUri() {
+        if (mUri == null)
+            mUri = ((Caronar) mContext.getApplicationContext()).getBaseRestUri()
+                    .buildUpon().appendEncodedPath(mCollectionName).build();
+        return mUri;
     }
 }

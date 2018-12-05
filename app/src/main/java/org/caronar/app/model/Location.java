@@ -7,7 +7,7 @@ import org.caronar.app.location.GeoCoordinate;
 public final class Location implements GeoCoordinate, BaseModel {
 
     @SerializedName("id")
-    private long mId = 0;
+    private Long mId;
 
     @SerializedName("name")
     private String mName = DEFAULT_NAME;
@@ -19,7 +19,7 @@ public final class Location implements GeoCoordinate, BaseModel {
     private double mLongitude = GeoCoordinate.DEFAULT_LONGITUDE;
 
     @Override public long getId() {
-        return mId;
+        return mId != null ? mId : 0;
     }
 
     public void setId(long id) {
